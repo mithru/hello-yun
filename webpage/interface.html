@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" ng-app>
+<head>
+    <meta charset="utf-8">
+
+    <title>AngularJS / Arduino</title>
+    <meta name="viewport" content="width=device-width">
+
+    <script src="http://code.angularjs.org/1.2.6/angular.min.js"></script>
+
+</head>
+
+<script>
+
+    function ArduinoCtrl($scope, $http, $interval)
+    {
+
+        $scope.setHeater = function(value) {
+                var url = "http://arduino.local/arduino/heater/" + value
+                $http.get(url);
+        }
+
+        $scope.triggerVibrator = function(vibe_id) {
+                var url = "http://arduino.local/arduino/vibe/" + vibe_id
+                $http.get(url);
+        }
+
+        $interval(function(){
+          $scope.getPurrInput()}, 300) 
+          
+      $scope.getPurrInput = function(){
+        var JSONurl= "http://arduino.local/arduino/purr/JSON_CALLBACK/"
+        $http.jsonp(JSONurl)
+        .success(function(data){
+                console.log(data.ret);
+                $scope.input = data.ret;
+                })
+                .error(function(data){
+                 console.log("error");
+                  });
+                } 
+  }
+
+
+</script>
+
+<body>
+    <div ng-controller="ArduinoCtrl" class="container">
+      <div>{{input}}</div>
+        <button ng-click="setHeater(0)" class="btn">Heater OFF</button>
+        <button ng-click="setHeater(180)" class="btn">Heater ON</button>
+
+        <button ng-click="triggerVibrator(0)" class="btn">Vibe 0</button> 
+        <button ng-click="triggerVibrator(1)" class="btn">Vibe 1</button> 
+        <button ng-click="triggerVibrator(2)" class="btn">Vibe 2</button>
+         <button ng-click="triggerVibrator(3)" class="btn">Vibe 3</button>
+    </div>
+</body>
+</html>
